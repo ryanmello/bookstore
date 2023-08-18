@@ -15,5 +15,6 @@ func main() {
 	routes.RegisterBookStoreRouter(r)
 
 	fmt.Printf("Starting server on port 8000\n")
-	log.Fatal(http.ListenAndServe(":8000", r))
+	http.Handle("/", r)
+	log.Fatal(http.ListenAndServe("localhost:9010", r))
 }
