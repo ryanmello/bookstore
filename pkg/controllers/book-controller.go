@@ -48,6 +48,7 @@ func CreateBook(w http.ResponseWriter, r *http.Request){
 	w.Write(res)
 }
 
+// update book
 func UpdateBook(w http.ResponseWriter, r *http.Request){
 	var updatedBook = &models.Book{}
 	utils.ParseBody(r, updatedBook)
@@ -78,7 +79,7 @@ func UpdateBook(w http.ResponseWriter, r *http.Request){
 	w.Write(res)
 }
 
-// delete book function
+// delete book
 func DeleteBook(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
 	bookId := vars["bookId"]
