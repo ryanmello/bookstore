@@ -78,6 +78,7 @@ func UpdateBook(w http.ResponseWriter, r *http.Request){
 	w.Write(res)
 }
 
+// delete book function
 func DeleteBook(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
 	bookId := vars["bookId"]
