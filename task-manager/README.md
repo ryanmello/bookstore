@@ -9,5 +9,5 @@ Basic error handling
 
 todo add "finish Go project"
 todo list
-todo done 1
+todo complete 1
 todo delete 1
