@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 )
 
 type Task struct {
@@ -56,10 +57,50 @@ func main() {
 
 		fmt.Println("Task added", taskName)
 	case "list":
-		fmt.Println("Listing all tasks...")
+		var tasks []Task
+
+		data, err := os.ReadFile("data.json")
+		if err != nil {
+			return
+		}
+		err = json.Unmarshal(data, &tasks)
+
+		for i, task := range tasks {
+			fmt.Println(i, task.Name, task.IsCompleted)
+		}
 	case "complete":
 		taskId := args[2]
-		fmt.Println("Completing task: ", taskId)
+		index, err := strconv.Atoi(taskId)
+
+		var tasks []Task
+
+		data, err := os.ReadFile("data.json")
+		if err != nil {
+			fmt.Println("Error reading file", err)
+			return
+		}
+
+		err = json.Unmarshal(data, &tasks)
+		if err != nil {
+			fmt.Println("Error at unmarshal", err)
+			return
+		}
+
+		tasks[index].IsCompleted = true
+
+		updatedData, err := json.MarshalIndent(tasks, "", " ")
+		if err != nil {
+			fmt.Println("Error at unmarshal index", err)
+			return
+		}
+		
+		err = os.WriteFile("data.json", updatedData, 0644)
+		if err != nil {
+			fmt.Println("Error writing file", err)
+			return
+		}
+
+		fmt.Println("Completed task", taskId)
 	case "delete":
 		taskId := args[2]
 		fmt.Println("Deleting task: ", taskId)
