@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"net/http"
+	"os"
+	"sync"
 	"time"
 )
 
@@ -19,23 +20,38 @@ func main() {
 	client := http.Client{
 		Timeout: 5 * time.Second,
 	}
-	
+
+	ch := make(chan string)
+	var wg sync.WaitGroup
+
 	for _, url := range urls {
-		fmt.Println("Checking", url)
-		// make a request to each url to check if it is active
-		res, err := client.Get(url)
-		if err != nil {
-			fmt.Println(err)
-		}
+		wg.Add(1)
+		
+		go func(url string){
+			defer wg.Done()
 
-		res.Body.Close()
+			res, err := client.Get(url)
+			if err != nil {
+				ch <- fmt.Sprintf("%s is not healthy: %v", url, err)
+				return
+			}
 
-		if res.StatusCode >= 200 && res.StatusCode < 300 {
-			fmt.Println("Healthy:", res.Status)
-		} else {
-			fmt.Println("Not healthy:", res.Status)
-		}
+			defer res.Body.Close()
+
+			if res.StatusCode >= 200 && res.StatusCode < 300 {
+				ch <- fmt.Sprintf("%s is healthy: %s", url, res.Status)
+			} else {
+				ch <- fmt.Sprintf("%s is not healthy: %s", url, res.Status)
+			}
+		}(url)
 	}
 
-	// use concurrency to check multiple urls while waiting on others
+	go func(){
+		wg.Wait()
+		close(ch)
+	}()
+
+	for result := range ch {
+		fmt.Println(result)
+	}
 }
