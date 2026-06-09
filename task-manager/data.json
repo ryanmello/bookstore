@@ -1,10 +1,6 @@
 [
- {
-  "name": "finish go project",
-  "isCompleted": true
- },
- {
-  "name": "run a mile",
-  "isCompleted": false
- }
+  {
+    "name": "run a mile",
+    "isCompleted": false
+  }
 ]

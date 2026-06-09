@@ -8,8 +8,8 @@ import (
 )
 
 type Task struct {
-	Name string `json:"name"`
-	IsCompleted bool `json:"isCompleted"`
+	Name        string `json:"name"`
+	IsCompleted bool   `json:"isCompleted"`
 }
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 		taskName := args[2]
 
 		newTask := Task{
-			Name: taskName,
+			Name:        taskName,
 			IsCompleted: false,
 		}
 
@@ -93,7 +93,7 @@ func main() {
 			fmt.Println("Error at unmarshal index", err)
 			return
 		}
-		
+
 		err = os.WriteFile("data.json", updatedData, 0644)
 		if err != nil {
 			fmt.Println("Error writing file", err)
@@ -103,7 +103,37 @@ func main() {
 		fmt.Println("Completed task", taskId)
 	case "delete":
 		taskId := args[2]
-		fmt.Println("Deleting task: ", taskId)
+		index, err := strconv.Atoi(taskId)
+
+		var tasks []Task
+
+		data, err := os.ReadFile("data.json")
+		if err != nil {
+			fmt.Println("Error reading file:", err)
+			return
+		}
+
+		err = json.Unmarshal(data, &tasks)
+		if err != nil {
+			fmt.Println("Error parsing JSON:", err)
+			return
+		}
+
+		tasks = append(tasks[:index], tasks[index+1:]...)
+
+		updatedData, err := json.MarshalIndent(tasks, "", "  ")
+		if err != nil {
+			fmt.Println("Error converting to JSON:", err)
+			return
+		}
+
+		err = os.WriteFile("data.json", updatedData, 0644)
+		if err != nil {
+			fmt.Println("Error writing file:", err)
+			return
+		}
+
+		fmt.Println("Deleted task: ", taskId)
 	default:
 		fmt.Println("I have no idea what ypu're doing: ", action)
 	}
