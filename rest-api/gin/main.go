@@ -4,7 +4,12 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ryanmello/bookstore/rest-api/gin/initializers"
 )
+
+func init() {
+	initializers.LoadEnvVariables()
+}
 
 func main(){
 	r := gin.Default()
