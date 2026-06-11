@@ -1,9 +1,8 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"github.com/ryanmello/bookstore/rest-api/gin/controllers"
 	"github.com/ryanmello/bookstore/rest-api/gin/initializers"
 )
 
@@ -15,11 +14,11 @@ func init() {
 func main(){
 	r := gin.Default()
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H {
-			"message": "pong",
-		})
-	})
+	r.POST("/post", controllers.CreatePost)
+	r.GET("/post", controllers.GetPosts)
+	r.GET("/post/:id", controllers.GetPost)
+	r.PUT("/post/:id", controllers.UpdatePost)
+	r.DELETE("/post/:id", controllers.DeletePost)
 
 	r.Run()
 }
